@@ -34,7 +34,7 @@ export function Lighting() {
 export function Ground() {
   const texture = useLoader(THREE.TextureLoader, grass)
   texture.wrapS = texture.wrapT = THREE.RepeatWrapping
-  texture.repeat.set(128, 128)
+  texture.repeat.set(100, 100)
 
   const [mesh] = usePlane(() => ({
     position: [0, 0, 0],
