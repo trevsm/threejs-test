@@ -7,10 +7,10 @@ import './App.css'
 
 softShadows()
 
-function Box() {
+function Box({x, y, z}) {
   const [ref, api] = useBox(() => ({
     mass: 1,
-    position: [0, 3, 0],
+    position: [x, y, z],
   }))
   return (
     <mesh
@@ -44,7 +44,7 @@ export default function App() {
     <Canvas
       shadowMap
       colorManagement
-      camera={{ position: [-5, 3, 5], fov: 60 }}
+      camera={{ position: [-15, 10, 6], fov: 60 }}
     >
       <OrbitControls/>
       <Sky
@@ -69,7 +69,7 @@ export default function App() {
       />
       <pointLight position={[0, -10, 0]} intensity={1.5} />
       <Physics>
-        <Box />
+        <Box x={0} y={0} z={0}/>
         <Plane />
       </Physics>
     </Canvas>
