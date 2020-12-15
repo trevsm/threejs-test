@@ -1,9 +1,11 @@
 import * as THREE from 'three'
 import React, { useEffect, useRef, useState } from 'react'
-import { useSphere } from '@react-three/cannon'
-import { useThree, useFrame } from 'react-three-fiber'
+import { Box } from '@react-three/drei'
+import { useBox } from '@react-three/cannon'
+import { useThree, useFrame, useLoader } from 'react-three-fiber'
+import cobble from "../assets/cobble.png"
 
-const SPEED = 2
+const SPEED = 3
 const keys = {
   KeyW: 'forward',
   KeyS: 'backward',
@@ -16,13 +18,22 @@ const direction = new THREE.Vector3()
 const frontVector = new THREE.Vector3()
 const sideVector = new THREE.Vector3()
 
+function Camera(props) {
+  const ref = useRef()
+  const { setDefaultCamera } = useThree()
+  // Make the camera known to the system
+  useEffect(() => setDefaultCamera(ref.current), [])
+  // Update it every frame
+  useFrame(() => ref.current.updateMatrixWorld())
+  return <perspectiveCamera ref={ref} {...props} />
+}
+
 const usePlayerControls = () => {
   const [movement, setMovement] = useState({
     forward: false,
     backward: false,
     left: false,
     right: false,
-    jump: false,
   })
   useEffect(() => {
     const handleKeyDown = e =>
@@ -40,28 +51,43 @@ const usePlayerControls = () => {
 }
 
 export const Player = props => {
-  const [ref, api] = useSphere(() => ({
-    mass: 1,
+  const [ref, api] = useBox(() => ({
+    mass: 0,
     type: 'Dynamic',
     position: [0, 1, 10],
     ...props,
   }))
+
   const { forward, backward, left, right, jump } = usePlayerControls()
+
   const { camera } = useThree()
+  camera.fov = 90
+
   const velocity = useRef([0, 0, 0])
+
   useEffect(() => api.velocity.subscribe(v => (velocity.current = v)), [])
+
   useFrame(() => {
-    camera.position.copy(ref.current.position)
+    const pos = ref.current.position
+    camera.position.copy({ x: pos.x, y: pos.y + 3, z: pos.z + 6 })
+
     frontVector.set(0, 0, backward - forward)
     sideVector.set(left - right, 0, 0)
+
     direction
       .subVectors(frontVector, sideVector)
       .normalize()
       .multiplyScalar(SPEED)
-      .applyEuler(camera.rotation)
+      .applyEuler(camera.rotation) // rotates
+
     api.velocity.set(direction.x, velocity.current[1], direction.z)
-    if (jump && Math.abs(velocity.current[1].toFixed(2)) < 0.05)
-      api.velocity.set(velocity.current[0], 7, velocity.current[2])
   })
-  return <mesh ref={ref} />
+
+  const texture = useLoader(THREE.TextureLoader, cobble)
+
+  return (
+    <Box ref={ref} castShadow>
+      <meshLambertMaterial attach="material" map={texture} />
+    </Box>
+  )
 }
