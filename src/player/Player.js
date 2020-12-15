@@ -17,16 +17,6 @@ const direction = new THREE.Vector3()
 const frontVector = new THREE.Vector3()
 const sideVector = new THREE.Vector3()
 
-function Camera(props) {
-  const ref = useRef()
-  const { setDefaultCamera } = useThree()
-  // Make the camera known to the system
-  useEffect(() => setDefaultCamera(ref.current), [])
-  // Update it every frame
-  useFrame(() => ref.current.updateMatrixWorld())
-  return <perspectiveCamera ref={ref} {...props} />
-}
-
 const usePlayerControls = () => {
   const [movement, setMovement] = useState({
     forward: false,
