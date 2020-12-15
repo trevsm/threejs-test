@@ -1,9 +1,9 @@
 import * as THREE from 'three'
 import React, { useEffect, useRef, useState } from 'react'
-import { Box } from '@react-three/drei'
-import { useBox } from '@react-three/cannon'
+import { Box, PointerLockControls } from '@react-three/drei'
 import { useThree, useFrame, useLoader } from 'react-three-fiber'
-import cobble from "../assets/cobble.png"
+import { useBox } from '@react-three/cannon'
+import cobble from '../assets/cobble.png'
 
 const SPEED = 3
 const keys = {
@@ -11,7 +11,6 @@ const keys = {
   KeyS: 'backward',
   KeyA: 'left',
   KeyD: 'right',
-  Space: 'jump',
 }
 const moveFieldByKey = key => keys[key]
 const direction = new THREE.Vector3()
@@ -58,7 +57,7 @@ export const Player = props => {
     ...props,
   }))
 
-  const { forward, backward, left, right, jump } = usePlayerControls()
+  const { forward, backward, left, right } = usePlayerControls()
 
   const { camera } = useThree()
   camera.fov = 90
@@ -86,8 +85,11 @@ export const Player = props => {
   const texture = useLoader(THREE.TextureLoader, cobble)
 
   return (
-    <Box ref={ref} castShadow>
-      <meshLambertMaterial attach="material" map={texture} />
-    </Box>
+    <>
+      <PointerLockControls />
+      <Box ref={ref} castShadow>
+        <meshLambertMaterial attach="material" map={texture} />
+      </Box>
+    </>
   )
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Canvas } from 'react-three-fiber'
-import { Sky, PointerLockControls, softShadows } from '@react-three/drei'
+import { Sky, softShadows } from '@react-three/drei'
 import { Lighting, Ground } from '../mesh/Landscape'
 import { Block } from '../mesh/Object'
 import { Player } from '../player/Player'
@@ -16,7 +16,6 @@ export default function App() {
     <Canvas >
       <Sky />
       <Lighting />
-      <PointerLockControls />
       <Physics>
         <Player />
         <Block x={0} y={0} z={0} />
