@@ -52,6 +52,8 @@ export const Player = props => {
   const { camera } = useThree()
   camera.fov = 90
 
+  const texture = useLoader(THREE.TextureLoader, cobble)
+
   const velocity = useRef([0, 0, 0])
 
   useEffect(() => api.velocity.subscribe(v => (velocity.current = v)), [])
@@ -71,8 +73,6 @@ export const Player = props => {
 
     api.velocity.set(direction.x, velocity.current[1], direction.z)
   })
-
-  const texture = useLoader(THREE.TextureLoader, cobble)
 
   return (
     <>
