@@ -14,6 +14,7 @@
   "dependencies": {
     "@react-three/cannon": "^0.5.3",
     "@react-three/drei": "^2.2.12",
+    "@react-three/postprocessing": "^1.5.0",
     "cannon": "^0.6.2",
     "drei": "^2.2.10",
     "minireset.css": "0.0.6",

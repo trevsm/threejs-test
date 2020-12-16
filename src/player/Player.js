@@ -1,85 +1,93 @@
+import React, { useEffect, useRef } from 'react'
+
 import * as THREE from 'three'
-import React, { useEffect, useRef, useState } from 'react'
-import { Box, PointerLockControls } from '@react-three/drei'
+
 import { useThree, useFrame, useLoader } from 'react-three-fiber'
-import { useBox } from '@react-three/cannon'
+import { useSphere } from '@react-three/cannon'
+
+import { PlayerControls } from './PlayerControls'
+
 import cobble from '../assets/cobble.png'
 
-const SPEED = 3
-const keys = {
-  KeyW: 'forward',
-  KeyS: 'backward',
-  KeyA: 'left',
-  KeyD: 'right',
-}
-const moveFieldByKey = key => keys[key]
 const direction = new THREE.Vector3()
 const frontVector = new THREE.Vector3()
 const sideVector = new THREE.Vector3()
 
-const usePlayerControls = () => {
-  const [movement, setMovement] = useState({
-    forward: false,
-    backward: false,
-    left: false,
-    right: false,
-  })
-  useEffect(() => {
-    const handleKeyDown = e =>
-      setMovement(m => ({ ...m, [moveFieldByKey(e.code)]: true }))
-    const handleKeyUp = e =>
-      setMovement(m => ({ ...m, [moveFieldByKey(e.code)]: false }))
-    document.addEventListener('keydown', handleKeyDown)
-    document.addEventListener('keyup', handleKeyUp)
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.removeEventListener('keyup', handleKeyUp)
-    }
-  }, [])
-  return movement
-}
+export const SPEED = 15
 
 export const Player = props => {
-  const [ref, api] = useBox(() => ({
-    mass: 0,
+  const c = useRef(0)
+
+  const [ref, api] = useSphere(() => ({
+    mass: 1,
     type: 'Dynamic',
-    position: [0, 1, 10],
+    position: [0, 10, 10],
     ...props,
   }))
 
-  const { forward, backward, left, right } = usePlayerControls()
+  const { forward, backward, left, right, jump } = PlayerControls()
 
   const { camera } = useThree()
-  camera.fov = 90
+
+  const rotateCam = pos => {
+    const radius = 15
+
+    camera.position.y = pos.y + 8
+
+    camera.position.x = pos.x /*radius * Math.sin((1 * c.current) / 100)*/
+
+    camera.position.z = pos.z + 20 /*radius * Math.cos((1 * c.current) / 100)*/
+
+    camera.lookAt(pos)
+  }
 
   const texture = useLoader(THREE.TextureLoader, cobble)
 
   const velocity = useRef([0, 0, 0])
 
-  useEffect(() => api.velocity.subscribe(v => (velocity.current = v)), [])
+  useEffect(() => {
+    api.velocity.subscribe(v => (velocity.current = v))
+  }, [])
 
   useFrame(() => {
+    c.current += left - right
+
     const pos = ref.current.position
-    camera.position.copy({ x: pos.x, y: pos.y + 3, z: pos.z + 6 })
+
+    rotateCam(pos)
 
     frontVector.set(0, 0, backward - forward)
     sideVector.set(left - right, 0, 0)
 
-    direction
-      .subVectors(frontVector, sideVector)
-      .normalize()
-      .multiplyScalar(SPEED)
-      .applyEuler(camera.rotation) // rotates
+    if (pos.y < 2)
+      direction
+        .subVectors(frontVector, sideVector)
+        .normalize()
+        .multiplyScalar(SPEED)
+    // .applyEuler(camera.rotation)
 
-    api.velocity.set(direction.x, velocity.current[1], direction.z)
+    // api.velocity.set(direction.x, velocity.current[1], direction.z)
+
+      velocity.current[0] -= velocity.current[0] / 100
+      velocity.current[2] -= velocity.current[2] / 100
+
+    const v = [
+      velocity.current[0] + direction.x / 100,
+      velocity.current[1],
+      velocity.current[2] + direction.z / 100,
+    ]
+
+    api.velocity.set(v[0], v[1], v[2])
+
+    if (jump && pos.y < 1) {
+      api.velocity.set(velocity.current[0], 10, velocity.current[2])
+    }
   })
 
   return (
-    <>
-      <PointerLockControls />
-      <Box ref={ref} castShadow>
-        <meshLambertMaterial attach="material" map={texture} />
-      </Box>
-    </>
+    <mesh ref={ref} castShadow>
+      <sphereBufferGeometry attach="geometry" args={[1, 16, 16]} />
+      <meshLambertMaterial map={texture} attach="material" />
+    </mesh>
   )
 }
