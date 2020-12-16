@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/App.css"],"names":[],"mappings":"AAAA,KACI,wBACJ,CAEA,OACI,WAAY,CACZ,YACJ","file":"main.2e2e2191.chunk.css","sourcesContent":["body{\r\n    background-color: #2a2a2a;\r\n}\r\n\r\ncanvas{\r\n    width: 100vh;\r\n    height: 100vh;\r\n}"]}
