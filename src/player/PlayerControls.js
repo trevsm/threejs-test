@@ -5,7 +5,7 @@ const keys = {
   KeyS: 'backward',
   KeyA: 'left',
   KeyD: 'right',
-  Space: 'jump'
+  ShiftLeft: 'boost',
 }
 
 export const moveFieldByKey = key => keys[key]
@@ -16,13 +16,17 @@ export function PlayerControls() {
     backward: false,
     left: false,
     right: false,
+    shift: false,
   })
 
   useEffect(() => {
-    const handleKeyDown = e =>
-      setMovement(m => ({ ...m, [moveFieldByKey(e.code)]: true }))
-    const handleKeyUp = e =>
-      setMovement(m => ({ ...m, [moveFieldByKey(e.code)]: false }))
+    const handleKeyDown = e => {
+      return setMovement(m => ({ ...m, [moveFieldByKey(e.code)]: true }))
+    }
+
+    const handleKeyUp = e => {
+      return setMovement(m => ({ ...m, [moveFieldByKey(e.code)]: false }))
+    }
 
     document.addEventListener('keydown', handleKeyDown)
     document.addEventListener('keyup', handleKeyUp)
