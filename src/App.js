@@ -11,6 +11,7 @@ import { Player } from './player/Player'
 
 import 'minireset.css'
 import './App.css'
+import { PointerLockControls } from '@react-three/drei'
 
 // softShadows()
 
@@ -19,6 +20,7 @@ function App() {
     <Canvas camera={{ fov: 45 }}>
       <Lighting />
       <CameraEffects />
+      {/* <PointerLockControls/> */}
       <Physics gravity={[0, -20, 0]}>
         <Player />
         <Landscape />
