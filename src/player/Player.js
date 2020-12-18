@@ -30,26 +30,20 @@ export function Player(props) {
   const frontVector = new THREE.Vector3()
   const turnVector = new THREE.Euler()
 
-  const rot = new THREE.Euler()
+  const rotationE = new THREE.Euler()
 
   function applyVelocity() {
     frontVector.set(0, 0, backward - forward)
     // turnVector.set(0,  , 0)
 
-    rot.set(0, rotation.current[1] + (left - right), 0)
+    rotationE.set(0, rotation.current[1] + (left - right), 0)
 
-    console.log(rot)
+    console.log(rotationE)
 
-    direction.subVectors(frontVector, turnVector).normalize().multiplyScalar(MAX_SPEED).applyEuler(rot)
+    direction.subVectors(frontVector, turnVector).normalize().multiplyScalar(MAX_SPEED).applyEuler(rotationE)
 
     velocity.current[0] -= velocity.current[0] / INERTIA
     velocity.current[2] -= velocity.current[2] / INERTIA
-
-    // const r = [
-    //   rotation.current[0],
-    //   rotation.current[1] + turnVector.y/50,
-    //   0
-    // ]
 
     const v = [
       velocity.current[0] + direction.x / (boost ? INERTIA / 2 : INERTIA) ,

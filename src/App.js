@@ -8,10 +8,10 @@ import { Lighting } from './lighting/Lighting'
 import { CameraEffects } from './effects/CameraEffects'
 import { Landscape } from './terrain/Landscape'
 import { Player } from './player/Player'
+import { Box } from './object/Box'
 
 import 'minireset.css'
 import './App.css'
-import { PointerLockControls } from '@react-three/drei'
 
 // softShadows()
 
@@ -20,9 +20,9 @@ function App() {
     <Canvas camera={{ fov: 45 }}>
       <Lighting />
       <CameraEffects />
-      {/* <PointerLockControls/> */}
       <Physics gravity={[0, -20, 0]}>
         <Player />
+        <Box/>
         <Landscape />
       </Physics>
     </Canvas>
