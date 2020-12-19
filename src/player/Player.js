@@ -15,6 +15,7 @@ export function Player(props) {
   const [ref, api] = useSphere(() => ({
     mass: 1,
     type: 'Dynamic',
+    rotation:[Math.PI/2,0,Math.PI/2],
     position: [0, 10, 10],
     ...props,
   }))
